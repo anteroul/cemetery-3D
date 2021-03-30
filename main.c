@@ -314,7 +314,16 @@ void updateGame(void)
                 arr_enemy[i].enemyBoxPos.x = rand() % 32 - 16;
                 arr_enemy[i].enemyBoxPos.y = -1.5f;
                 arr_enemy[i].enemyBoxPos.z = rand() % 32 - 16;
-                struct BoundingBox newBounds = {arr_enemy[i].enemyBoxPos.x - 2.5f, 0.0f , arr_enemy[i].enemyBoxPos.z - 2.5f, arr_enemy[i].enemyBoxPos.x + 2.5f, 2.5f, arr_enemy[i].enemyBoxPos.z + 2.5f};
+                
+                struct BoundingBox newBounds = {
+                    arr_enemy[i].enemyBoxPos.x - 2.5f, 
+                    0.0f, 
+                    arr_enemy[i].enemyBoxPos.z - 2.5f, 
+                    arr_enemy[i].enemyBoxPos.x + 2.5f, 
+                    2.5f, 
+                    arr_enemy[i].enemyBoxPos.z + 2.5f
+                };
+                
                 arr_enemy[i].enemyBounds = newBounds;
                 arr_enemy[i].active = true;
             }
