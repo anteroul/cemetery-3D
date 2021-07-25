@@ -1,14 +1,13 @@
 /*
 Author: Uljas Antero Lindell
-Version: 1.1
+Version: 1.2
 */
-
 
 #include "raylib.h"
 #include "stdlib.h"
 #define NUM_FRAMES_PER_LINE     4
 #define NUM_LINES               4
-
+#define ENEMIES                 4
 
 
 typedef struct Enemy {
@@ -45,7 +44,7 @@ static void updateGame(void);
 static void resetGame(void);
 
 // Structs:
-static Enemy arr_enemy[4];
+static Enemy arr_enemy[ENEMIES];
 static Texture2D hud;
 static Texture2D wall;
 static Texture2D sword;
@@ -60,7 +59,6 @@ static Camera camera = { 0 };
 int main(void)
 {
     // Initialization
-    //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
     const int screenHeight = 450;
     InitWindow(screenWidth, screenHeight, "Cemetary 3D");
@@ -72,8 +70,6 @@ int main(void)
         updateGame();
     }
     // De-Initialization
-    //--------------------------------------------------------------------------------------
-    UnloadMusicStream(music);
     UnloadSound(fxSlash);
     UnloadSound(fxBegin);
     UnloadSound(fxDeath);
@@ -84,7 +80,6 @@ int main(void)
     UnloadTexture(hud);
     CloseAudioDevice();
     CloseWindow();        // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
     return 0;
 }
 
@@ -109,11 +104,9 @@ void initGame(void)
     attacking = false;
     gameOver = false;
     Vector3 cubeSize = {2.0f, 2.0f, 2.0f};
-    Enemy arr_enemy[4];
+    Enemy arr_enemy[ENEMIES];
     
-    int i;
-
-    for (i = 0; i < 4; i++)
+    for (int i = 0; i < ENEMIES; i++)
     {
         arr_enemy[i].enemyStartPos.x = rand() % 32 - 16;
         arr_enemy[i].enemyStartPos.y = -1.0f;
@@ -148,21 +141,17 @@ void initGame(void)
     camera.target = (Vector3){ 0.0f, 1.8f, 0.0f };
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
     camera.fovy = 60.0f;
-    camera.type = CAMERA_PERSPECTIVE;
+    camera.projection = CAMERA_PERSPECTIVE;
     SetCameraMode(camera, CAMERA_FIRST_PERSON); // Set a first person camera mode
     SetTargetFPS(60);                           // Set our game to run at 60 frames-per-second
     deathSound = false;
     PlaySound(fxBegin);
-    PlayMusicStream(music);
 }
 
 
 
 void resetGame(void)
 {
-    
-    int i;
-    
     hp = 100;
     energy = 100;
     score = 0;
@@ -179,7 +168,7 @@ void resetGame(void)
     PlayMusicStream(music);
     updateGame();
     
-    for (i = 0; i < 4; i++)
+    for (int i = 0; i < ENEMIES; i++)
     {
         arr_enemy[i].enemyBoxPos.x = rand() % 32 - 16;
         arr_enemy[i].enemyBoxPos.y = -1.0f;
@@ -192,7 +181,6 @@ void resetGame(void)
 void updateGame(void)
 {
     UpdateMusicStream(music);
-    int i;
     // Update
     drawGame();
     Vector3 oldCamPos = camera.position;
@@ -201,6 +189,7 @@ void updateGame(void)
     if(!gameOver)
     {
         //Running logic
+        
         if (IsKeyDown(32) == true)
         {
             if(energy > 0)
@@ -234,24 +223,26 @@ void updateGame(void)
         {
             swordPosition.y += 25.0f;
         }
-        //----------------------------------------------------------------------------------
         
         framesCounter++;
         
         // Bounding boxes
         
-        //range
-        struct BoundingBox range = {camera.target.x - 0.5f, camera.target.y - 1.0f, camera.target.z - 0.5f, camera.target.x + 0.5f, 
-        camera.target.y + 1.5f, camera.target.z + 0.5f};
+        // Attack Range
+        struct BoundingBox range = {
+            camera.target.x - 0.5f, camera.target.y - 1.0f, camera.target.z - 0.5f,
+            camera.target.x + 0.5f, camera.target.y + 1.5f, camera.target.z + 0.5f
+        };
         
         // Player Bounding Box
-        struct BoundingBox player = {camera.position.x - 1.0f, camera.position.y - 1.5f, camera.position.z - 1.0f, camera.position.x + 1.0f, 
-        camera.position.y + 0.5f, camera.position.z + 1.0f};
-        //----------------------------------------------------------------------------------
+        struct BoundingBox player = {
+            camera.position.x - 1.0f, camera.position.y - 1.5f, camera.position.z - 1.0f,
+            camera.position.x + 1.0f,camera.position.y + 0.5f, camera.position.z + 1.0f
+        };
         
         // Enemy logic
         
-        for (i = 0; i < 4; i++)
+        for (int i = 0; i < ENEMIES; i++)
         {
             if(arr_enemy[i].active == true)
             {
@@ -277,8 +268,10 @@ void updateGame(void)
                     
                     // Define Bounding Box for enemy
                     
-                    struct BoundingBox cBounds = {arr_enemy[i].enemyBoxPos.x - 2.5f, 0.0f , arr_enemy[i].enemyBoxPos.z - 2.5f, 
-                    arr_enemy[i].enemyBoxPos.x + 2.5f, 2.5f, arr_enemy[i].enemyBoxPos.z + 2.5f};
+                    struct BoundingBox cBounds = {
+                        arr_enemy[i].enemyBoxPos.x - 2.5f, 0.0f , arr_enemy[i].enemyBoxPos.z - 2.5f,
+                        arr_enemy[i].enemyBoxPos.x + 2.5f, 2.5f, arr_enemy[i].enemyBoxPos.z + 2.5f
+                    };
                     
                     arr_enemy[i].enemyBounds = cBounds;
                     
@@ -287,7 +280,9 @@ void updateGame(void)
                 {
                     arr_enemy[i].enemyBoxPos.y += 0.01f;
                 }
+                
                 // Attack player logic
+                
                 if(CheckCollisionBoxes(player, arr_enemy[i].enemyBounds) && arr_enemy[i].enemyBoxPos.y >= 1.0f)
                 {
                     if (((framesCounter/30)%2) == 1)
@@ -296,7 +291,9 @@ void updateGame(void)
                         framesCounter = 0;
                     }
                 }
+                
                 // Attack enemy logic
+                
                 if(attacking)
                 {
                     if(CheckCollisionBoxes(range, arr_enemy[i].enemyBounds))
@@ -308,19 +305,22 @@ void updateGame(void)
                 }
                 
             }
+            
             // Respawn
+            
             else
             {
                 arr_enemy[i].enemyBoxPos.x = rand() % 32 - 16;
                 arr_enemy[i].enemyBoxPos.y = -1.5f;
                 arr_enemy[i].enemyBoxPos.z = rand() % 32 - 16;
                 
-                struct BoundingBox newBounds = {
-                    arr_enemy[i].enemyBoxPos.x - 2.5f, 
-                    0.0f, 
-                    arr_enemy[i].enemyBoxPos.z - 2.5f, 
-                    arr_enemy[i].enemyBoxPos.x + 2.5f, 
-                    2.5f, 
+                struct BoundingBox newBounds =
+                {
+                    arr_enemy[i].enemyBoxPos.x - 2.5f,
+                    0.0f,
+                    arr_enemy[i].enemyBoxPos.z - 2.5f,
+                    arr_enemy[i].enemyBoxPos.x + 2.5f,
+                    2.5f,
                     arr_enemy[i].enemyBoxPos.z + 2.5f
                 };
                 
@@ -328,9 +328,9 @@ void updateGame(void)
                 arr_enemy[i].active = true;
             }
         }
-        //----------------------------------------------------------------------------------
         
         // Wall logic
+        
         if(camera.position.x <= -15.0f || camera.position.x >= 15.0f)
         {
             camera.position = oldCamPos;
@@ -339,9 +339,9 @@ void updateGame(void)
         {
             camera.position = oldCamPos;
         }
-        //----------------------------------------------------------------------------------
         
         // Attack logic
+        
         if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !attacking)
         {
             if(energy >= 30)
@@ -354,7 +354,7 @@ void updateGame(void)
         if (attacking)
         {
             frameRec.y = 400.0f;
-            frameRec.x = 400.0f*currentFrame;
+            frameRec.x = 400.0f * currentFrame;
             swordPosition.x = 240.0f;
             swordPosition.y = 145.0f;
             attackCounter++;
@@ -374,8 +374,9 @@ void updateGame(void)
             frameRec.y = 0.0f;
             frameRec.x = 0.0f;
         }
-        //----------------------------------------------------------------------------------
+        
         // Game Over logic
+        
         if(hp <= 0)
         {
             StopMusicStream(music);
@@ -388,8 +389,6 @@ void updateGame(void)
 
 void drawGame(void)
 {
-    int i;
-    
     BeginDrawing();
 
         ClearBackground(BLACK);
@@ -399,24 +398,24 @@ void drawGame(void)
             
             DrawPlane((Vector3){0.0f, 0.0f, 0.0f }, (Vector2){ 33.5f, 33.5f }, BROWN); // Draw ground
                             
-            //WALL 1
+            // WALL 1
             DrawModel(wallModel, (Vector3){12.0f, 2.5f, 16.0f}, 1.0f, WHITE);
             DrawModel(wallModel, (Vector3){0.0f, 2.5f, 16.0f}, 1.0f, WHITE);
             DrawModel(wallModel, (Vector3){-12.0f, 2.5f, 16.0f}, 1.0f, WHITE);
-            //WALL 2
+            // WALL 2
             DrawModel(wallModel, (Vector3){12.0f, 2.5f, -16.0f}, 1.0f, WHITE);
             DrawModel(wallModel, (Vector3){0.0f, 2.5f, -16.0f}, 1.0f, WHITE);
             DrawModel(wallModel, (Vector3){-12.0f, 2.5f, -16.0f}, 1.0f, WHITE);
-            //WALL 3
+            // WALL 3
             DrawModelEx(wallModel, (Vector3){16.5f, 2.5f, -10.0f}, (Vector3){0.0f, 1.0f, 0.0f}, 90.0f, (Vector3){1.0f, 1.0f, 1.0f}, WHITE);
             DrawModelEx(wallModel, (Vector3){16.5f, 2.5f, 2.0f}, (Vector3){0.0f, 1.0f, 0.0f}, 90.0f, (Vector3){1.0f, 1.0f, 1.0f}, WHITE);
             DrawModelEx(wallModel, (Vector3){16.5f, 2.5f, 14.0f}, (Vector3){0.0f, 1.0f, 0.0f}, 90.0f, (Vector3){1.0f, 1.0f, 1.0f}, WHITE);
-            //WALL 4
+            // WALL 4
             DrawModelEx(wallModel, (Vector3){-16.5f, 2.5f, 10.0f}, (Vector3){0.0f, 1.0f, 0.0f}, 90.0f, (Vector3){1.0f, 1.0f, 1.0f}, WHITE);
             DrawModelEx(wallModel, (Vector3){-16.5f, 2.5f, -2.0f}, (Vector3){0.0f, 1.0f, 0.0f}, 90.0f, (Vector3){1.0f, 1.0f, 1.0f}, WHITE);
             DrawModelEx(wallModel, (Vector3){-16.5f, 2.5f, -14.0f}, (Vector3){0.0f, 1.0f, 0.0f}, 90.0f, (Vector3){1.0f, 1.0f, 1.0f}, WHITE);
             
-            for(i = 0; i < 4; i++)
+            for(int i = 0; i < ENEMIES; i++)
             {
                 DrawCube(arr_enemy[i].enemyBoxPos, 2.0f, 2.0f, 2.0f, DARKGREEN);
             }
@@ -424,8 +423,8 @@ void drawGame(void)
             EndMode3D();
             DrawTextureRec(sword, frameRec, swordPosition, WHITE);
             DrawText(TextFormat("%04i", score), 20, 380, 40, GREEN);
-            DrawText(TextFormat("%03i", hp), 720, 380, 40, RED);              
-            DrawText(TextFormat("%03i", energy), 580, 380, 40, BLUE);              
+            DrawText(TextFormat("%03i", hp), 720, 380, 40, RED);
+            DrawText(TextFormat("%03i", energy), 580, 380, 40, BLUE);
             DrawTexture(crosshair, 390, 215, WHITE);
             DrawTexture(hud, 0, 0, WHITE);
         }
@@ -446,5 +445,5 @@ void drawGame(void)
         }
         DrawFPS(0, 0);
         
-    EndDrawing();      
+    EndDrawing();
 }
