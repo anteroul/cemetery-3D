@@ -146,6 +146,7 @@ void initGame(void)
     SetTargetFPS(60);                           // Set our game to run at 60 frames-per-second
     deathSound = false;
     PlaySound(fxBegin);
+    PlayMusicStream(music);
 }
 
 
