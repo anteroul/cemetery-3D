@@ -61,7 +61,7 @@ int main(void)
     // Initialization
     const int screenWidth = 800;
     const int screenHeight = 450;
-    InitWindow(screenWidth, screenHeight, "Cemetary 3D");
+    InitWindow(screenWidth, screenHeight, "Cemetery 3D");
     InitAudioDevice();
     initGame();
     // Main game loop
