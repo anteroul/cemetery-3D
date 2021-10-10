@@ -1,6 +1,6 @@
 /*
 Author: Uljas Antero Lindell
-Version: 1.2
+Version: 1.3
 */
 
 #include "raylib.h"
