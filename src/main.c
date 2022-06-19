@@ -1,58 +1,10 @@
 /*
 Author: Uljas Antero Lindell
-Version: 1.4
+Version: 1.5
 */
 
-#include "raylib.h"
+#include "globals.h"
 #include "stdlib.h"
-#define NUM_FRAMES_PER_LINE     4
-#define ENEMIES                 4
-
-
-typedef struct Enemy {
-    Vector3 enemyStartPos;
-    Vector3 enemyBoxPos;
-    Vector3 enemyBoxSize;
-    BoundingBox enemyBounds;
-    bool active;
-} Enemy;
-
-// Sounds:
-static Sound fxSlash;
-static Sound fxBegin;
-static Sound fxDeath;
-static Music music;
-
-// Variables:
-static int hp;
-static int energy;
-static int score;
-static int level;
-static int currentFrame;
-static int currentLine;
-static int framesCounter;
-static int attackCounter;
-static bool attacking;
-static bool gameOver;
-static bool deathSound;
-
-// Functions:
-static void initGame(void);
-static void drawGame(void);
-static void updateGame(void);
-static void resetGame(void);
-
-// Structs:
-static Enemy arr_enemy[ENEMIES];
-static Texture2D hud;
-static Texture2D wall;
-static Texture2D sword;
-static Texture2D crosshair;
-static Model wallModel;
-static Vector2 swordPosition;
-static Rectangle frameRec;
-static Camera camera = { 0 };
-
 
 
 int main(void)
@@ -97,7 +49,6 @@ void initGame(void)
     score = 0;
     level = 1;
     currentFrame = 0;
-    currentLine = 0;
     framesCounter = 0;
     attackCounter = 0;
     attacking = false;
@@ -113,7 +64,6 @@ void initGame(void)
         arr_enemy[i].enemyBoxPos.x = arr_enemy[i].enemyStartPos.x;
         arr_enemy[i].enemyBoxPos.y = arr_enemy[i].enemyStartPos.y;
         arr_enemy[i].enemyBoxPos.z = arr_enemy[i].enemyStartPos.z;
-        arr_enemy[i].enemyBoxSize = cubeSize;
         arr_enemy[i].active = true;
     }
 
@@ -157,7 +107,6 @@ void resetGame(void)
     score = 0;
     level = 1;
     currentFrame = 0;
-    currentLine = 0;
     framesCounter = 0;
     attackCounter = 0;
     attacking = false;
