@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(ValiantEngine)
+project(Cemetery3D)
 set(CMAKE_C_STANDARD 23)
 
 # Adding Raylib
