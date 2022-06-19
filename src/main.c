@@ -328,9 +328,6 @@ void drawGame(void) {
         DrawTexture(hud, 0, 0, WHITE);
 
     } else {
-        if (IsKeyDown(32))
-            resetGame();
-
         if (!deathSound) {
             PlaySound(fxDeath);
             deathSound = true;
@@ -341,6 +338,9 @@ void drawGame(void) {
         DrawText("PRESS SPACE TO RETRY!", GetScreenWidth() / 2 - MeasureText("PRESS SPACE TO RETRY!", 20) / 2,
                  GetScreenHeight() / 2, 20, RAYWHITE);
         DrawText(TextFormat("%04i", score), 20, 380, 40, GREEN);
+
+        if (IsKeyDown(32))
+            resetGame();
     }
     DrawFPS(0, 0);
 
