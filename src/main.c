@@ -1,8 +1,3 @@
-/*
-Author: Uljas Antero Lindell
-Version: 1.5
-*/
-
 #include "globals.h"
 #include "stdlib.h"
 
@@ -174,11 +169,12 @@ void updateGame(void) {
                     // Follow player
                     if (camera.position.x > arr_enemy[i].enemyBoxPos.x - 3.0f)
                         arr_enemy[i].enemyBoxPos.x += 0.04f;
-                    if (camera.position.x < arr_enemy[i].enemyBoxPos.x + 3.0f)
+                    else
                         arr_enemy[i].enemyBoxPos.x -= 0.04f;
+                    
                     if (camera.position.z > arr_enemy[i].enemyBoxPos.z - 3.0f)
                         arr_enemy[i].enemyBoxPos.z += 0.04f;
-                    if (camera.position.z < arr_enemy[i].enemyBoxPos.z + 3.0f)
+                    else
                         arr_enemy[i].enemyBoxPos.z -= 0.04f;
 
                     // Define Bounding Box for enemy
