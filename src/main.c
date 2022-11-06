@@ -7,14 +7,18 @@ int main(void) {
     // Initialization
     const int screenWidth = 800;
     const int screenHeight = 450;
+
     InitWindow(screenWidth, screenHeight, "Cemetery 3D");
     InitAudioDevice();
+
     initGame();
+
     // Main game loop
-    while (!WindowShouldClose())                // Detect window close button or ESC key
+    while (!WindowShouldClose())
     {
         updateGame();
     }
+
     // De-Initialization
     UnloadSound(fxSlash);
     UnloadSound(fxBegin);
@@ -46,6 +50,7 @@ void initGame(void) {
     attackCounter = 0;
     attacking = false;
     gameOver = false;
+
     Enemy arr_enemy[ENEMIES];
 
     for (int i = 0; i < ENEMIES; i++) {

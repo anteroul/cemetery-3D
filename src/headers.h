@@ -2,12 +2,21 @@
 #define HEADERS_H_INCLUDED
 
 #include <raylib.h>
+#include <stdlib.h>
+#include <string.h>
 
 /*-------Asset Loaders-------*/
 
 Sound loadSound(char* path);
 Music loadMusic(char* path);
-Texture2D loadGraphics(char* path);
+Texture2D loadTex(char* path);
+
+/*---------------------------*/
+
+
+/*------Helper Functions-----*/
+
+char* fixPath(char* path);
 
 /*---------------------------*/
 
