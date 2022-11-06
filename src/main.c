@@ -1,5 +1,6 @@
+#include "headers.h"
 #include "globals.h"
-#include "stdlib.h"
+#include <stdlib.h>
 
 
 int main(void) {
@@ -180,8 +181,8 @@ void updateGame(void) {
                     // Define Bounding Box for enemy
 
                     struct BoundingBox cBounds = {
-                            arr_enemy[i].enemyBoxPos.x - 2.5f, 0.0f, arr_enemy[i].enemyBoxPos.z - 2.5f,
-                            arr_enemy[i].enemyBoxPos.x + 2.5f, 2.5f, arr_enemy[i].enemyBoxPos.z + 2.5f
+                            (Vector3) {arr_enemy[i].enemyBoxPos.x - 2.5f, 0.0f, arr_enemy[i].enemyBoxPos.z - 2.5f},
+                            (Vector3) {arr_enemy[i].enemyBoxPos.x + 2.5f, 2.5f, arr_enemy[i].enemyBoxPos.z + 2.5f}
                     };
 
                     arr_enemy[i].enemyBounds = cBounds;
@@ -218,15 +219,10 @@ void updateGame(void) {
                 arr_enemy[i].enemyBoxPos.y = -1.5f;
                 arr_enemy[i].enemyBoxPos.z = rand() % 32 - 16;
 
-                struct BoundingBox newBounds =
-                        {
-                                arr_enemy[i].enemyBoxPos.x - 2.5f,
-                                0.0f,
-                                arr_enemy[i].enemyBoxPos.z - 2.5f,
-                                arr_enemy[i].enemyBoxPos.x + 2.5f,
-                                2.5f,
-                                arr_enemy[i].enemyBoxPos.z + 2.5f
-                        };
+                struct BoundingBox newBounds = {
+                    (Vector3) {arr_enemy[i].enemyBoxPos.x - 2.5f, 0.0f, arr_enemy[i].enemyBoxPos.z - 2.5f},
+                    (Vector3) {arr_enemy[i].enemyBoxPos.x + 2.5f, 2.5f, arr_enemy[i].enemyBoxPos.z + 2.5f}
+                };
 
                 arr_enemy[i].enemyBounds = newBounds;
                 arr_enemy[i].active = true;

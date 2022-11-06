@@ -1,14 +1,11 @@
-//
-// Created by valiant on 19.6.2022.
-//
-
 #ifndef VALIANTENGINE_GLOBALS_H
 #define VALIANTENGINE_GLOBALS_H
+
+#include "headers.h"
 
 #define NUM_FRAMES_PER_LINE     4
 #define ENEMIES                 4
 
-#include "raylib.h"
 
 typedef struct Enemy {
     Vector3 enemyStartPos;
