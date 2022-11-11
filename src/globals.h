@@ -12,9 +12,6 @@ typedef struct Player {
     int energy;
     int score;
     int level;
-    int currentFrame;
-    int framesCounter;
-    int attackCounter;
     bool attacking;
 } Player;
 
@@ -32,6 +29,8 @@ static Sound fxDeath;
 static Music music;
 
 // Variables:
+static int currentFrame;
+static int framesCounter;
 static bool gameOver;
 static bool deathSound;
 
@@ -58,8 +57,9 @@ Player initPlayer(void);
 
 // Animations and gameplay logic:
 void animateSword(void);
+void sprint(Player* p, Camera* cam);
+void attack(Player* p, Sound* sound);
 void kill(Enemy* enemy);
-void checkInput(void);
 void takeDamage(void);
 
 #endif //VALIANTENGINE_GLOBALS_H

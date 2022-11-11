@@ -22,7 +22,7 @@ Texture2D loadTex(char path[])
 
 char* concat(char path[])
 {
-	char root[] = "../";
+    char root[] = "../";
     char newPath[strlen(path) + strlen(root)];
 
     sprintf(newPath, "%s%s", root, path);

@@ -7,6 +7,8 @@ void initGame(void) {
     music = loadMusic(concat("resources/music.mp3"));
 
     player = initPlayer();
+    currentFrame = 0;
+    framesCounter = 0;
     gameOver = false;
     Enemy enemy[ENEMIES];
 
@@ -46,12 +48,11 @@ void initGame(void) {
 }
 
 void resetGame(void) {
-
+    player = initPlayer();
     camera.position = (Vector3) {4.0f, 2.0f, 4.0f};
     deathSound = false;
     PlaySound(fxBegin);
     PlayMusicStream(music);
-    updateGame();
 
     for (int i = 0; i < ENEMIES; i++) {
         arr_enemy[i].enemyBoxPos.x = rand() % 32 - 16;
@@ -60,7 +61,6 @@ void resetGame(void) {
     }
 }
 
-// TODO: FIX THIS!
 void updateGame(void) {
     UpdateMusicStream(music);
     // Update
@@ -69,31 +69,9 @@ void updateGame(void) {
     UpdateCamera(&camera);                  // Update camera
 
     if (!gameOver) {
-        //Running logic
 
-        if (IsKeyDown(32)) {
-            if (player.energy > 0) {
-                UpdateCamera(&camera);
-                if (IsKeyDown(65) || IsKeyDown(83) || IsKeyDown(68) || IsKeyDown(87))
-                    player.energy--;
-                else if (player.energy < 100)
-                    player.energy++;
-            }
-        } else if (player.energy < 100) {
-            player.energy++;
-        }
-
-        // Sword moves with camera
-
-        swordPosition.y = 50.0f * camera.target.y;
-        swordPosition.x = 340.0f;
-
-        if (camera.target.y <= 2.5f)
-            swordPosition.y += 30.0f;
-        if (camera.target.y <= 1.5f)
-            swordPosition.y += 25.0f;
-
-        player.framesCounter++;
+        // Check input for sprinting:
+        sprint(&player, &camera);
 
         // Bounding boxes
 
@@ -141,9 +119,9 @@ void updateGame(void) {
                 // Attack player logic
 
                 if (CheckCollisionBoxes(playerHitBox, arr_enemy[i].enemyBounds) && arr_enemy[i].enemyBoxPos.y >= 1.0f) {
-                    if (((player.framesCounter / 30) % 2) == 1) {
+                    if (((framesCounter / 30) % 2) == 1) {
                         player.hp -= rand() % player.level + 1;
-                        player.framesCounter = 0;
+                        framesCounter = 0;
                     }
                 }
 
@@ -189,36 +167,12 @@ void updateGame(void) {
         if (camera.position.z <= -15.0f || camera.position.z >= 15.0f)
             camera.position = oldCamPos;
 
-        // Attack logic
+        // Check input for attack:
+        attack(&player, &fxSlash);
+        animateSword();
+        framesCounter++;
 
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !player.attacking) {
-            if (player.energy >= 30) {
-                PlaySound(fxSlash);
-                player.attacking = true;
-                player.energy -= 30;
-            }
-        }
-        if (player.attacking) {
-            frameRec.y = 400.0f;
-            frameRec.x = 400.0f * player.currentFrame;
-            swordPosition.x = 240.0f;
-            swordPosition.y = 145.0f;
-            player.attackCounter++;
-            if (player.attackCounter > 2) {
-                player.currentFrame++;
-                if (player.currentFrame >= NUM_FRAMES_PER_LINE) {
-                    player.currentFrame = 0;
-                    player.attacking = false;
-                }
-                player.attackCounter = 0;
-            }
-        } else {
-            frameRec.y = 0.0f;
-            frameRec.x = 0.0f;
-        }
-
-        // Game Over logic
-
+        // Game Over logic:
         if (player.hp <= 0) {
             StopMusicStream(music);
             gameOver = true;
@@ -227,6 +181,7 @@ void updateGame(void) {
 }
 
 void animateSword(void) {
+    int attackCounter = framesCounter;
     // Sword moves with camera:
     swordPosition.y = 50.0f * camera.target.y;
     swordPosition.x = 340.0f;
@@ -238,17 +193,16 @@ void animateSword(void) {
 
     if (player.attacking) {
         frameRec.y = 400.0f;
-        frameRec.x = 400.0f * player.currentFrame;
+        frameRec.x = 400.0f * (float) currentFrame;
         swordPosition.x = 240.0f;
         swordPosition.y = 145.0f;
-        player.attackCounter++;
-        if (player.attackCounter > 2) {
-            player.currentFrame++;
-            if (player.currentFrame >= NUM_FRAMES_PER_LINE) {
-                player.currentFrame = 0;
+        attackCounter++;
+        if (attackCounter > 2) {
+            if (currentFrame >= NUM_FRAMES_PER_LINE) {
+                currentFrame = 0;
                 player.attacking = false;
             }
-            player.attackCounter = 0;
+            currentFrame++;
         }
     } else {
         frameRec.y = 0.0f;
@@ -312,7 +266,7 @@ void drawGame(void) {
                  GetScreenHeight() / 2, 20, RAYWHITE);
         DrawText(TextFormat("%04i", player.score), 20, 380, 40, GREEN);
 
-        if (IsKeyDown(32)) {
+        if (IsKeyPressed(32)) {
             resetGame();
             gameOver = false;
         }
