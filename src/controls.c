@@ -1,30 +1,32 @@
 #include "globals.h"
 #include "headers.h"
 
-void checkInput(void)
+void sprint(Player* p, Camera* cam)
 {
-    // Attack:
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !player.attacking)
-    {
-        if (player.energy >= 30) {
-            PlaySound(fxSlash);
-            player.attacking = true;
-            player.energy -= 30;
-        }
-    }
-    //Running logic:
     if (IsKeyDown(32))
     {
-        if (player.energy > 0)
+        if (p->energy > 0)
         {
-            UpdateCamera(&camera);
+            UpdateCamera(cam);
             if (IsKeyDown(65) || IsKeyDown(83) || IsKeyDown(68) || IsKeyDown(87))
-                player.energy--;
-            else if (player.energy < 100)
-                player.energy++;
+                p->energy--;
+            else if (p->energy < 100)
+                p->energy++;
         }
-    } else if (player.energy < 100) {
-        player.energy++;
+    } else if (p->energy < 100) {
+        p->energy++;
+    }
+}
+
+void attack(Player* p, Sound* sound)
+{
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !p->attacking)
+    {
+        if (p->energy >= 30) {
+            PlaySound(*sound);
+            p->attacking = true;
+            p->energy -= 30;
+        }
     }
 }
 
