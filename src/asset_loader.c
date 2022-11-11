@@ -1,16 +1,16 @@
 #include "headers.h"
 
-Sound loadSound(char* path)
+Sound loadSound(char path[])
 {
 	return LoadSound(path);
 }
 
-Music loadMusic(char* path)
+Music loadMusic(char path[])
 {
 	return LoadMusicStream(path);
 }
 
-Texture2D loadTex(char* path)
+Texture2D loadTex(char path[])
 {
 	Image img = LoadImage(path);
 	Texture2D tex = LoadTextureFromImage(img);
@@ -20,19 +20,13 @@ Texture2D loadTex(char* path)
 	return tex;
 }
 
-char* fixPath(char* path)
+char* concat(char path[])
 {
-	char root[10] = "../../../";
-	char* newPath;
+	char root[] = "../";
+    char newPath[strlen(path) + strlen(root)];
 
-	newPath = malloc(strlen(path) + 10);
-	
-	strcpy(newPath, root);
-	strcat(newPath, path);
+    sprintf(newPath, "%s%s", root, path);
+    printf("%s\n", newPath);
 
-	char pathCopy = *newPath;
-	
-	free(newPath);
-
-	return pathCopy;
+    return newPath;
 }

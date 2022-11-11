@@ -7,6 +7,17 @@
 #define ENEMIES                 4
 
 
+typedef struct Player {
+    int hp;
+    int energy;
+    int score;
+    int level;
+    int currentFrame;
+    int framesCounter;
+    int attackCounter;
+    bool attacking;
+} Player;
+
 typedef struct Enemy {
     Vector3 enemyStartPos;
     Vector3 enemyBoxPos;
@@ -21,24 +32,11 @@ static Sound fxDeath;
 static Music music;
 
 // Variables:
-static int hp;
-static int energy;
-static int score;
-static int level;
-static int currentFrame;
-static int framesCounter;
-static int attackCounter;
-static bool attacking;
 static bool gameOver;
 static bool deathSound;
 
-// Functions:
-static void initGame(void);
-static void drawGame(void);
-static void updateGame(void);
-static void resetGame(void);
-
 // Structs:
+static Player player;
 static Enemy arr_enemy[ENEMIES];
 static Texture2D hud;
 static Texture2D wall;
@@ -48,5 +46,20 @@ static Model wallModel;
 static Vector2 swordPosition;
 static Rectangle frameRec;
 static Camera camera = { 0 };
+
+// Gameplay functions:
+void initGame(void);
+void drawGame(void);
+void updateGame(void);
+void resetGame(void);
+
+// Initializers:
+Player initPlayer(void);
+
+// Animations and gameplay logic:
+void animateSword(void);
+void kill(Enemy* enemy);
+void checkInput(void);
+void takeDamage(void);
 
 #endif //VALIANTENGINE_GLOBALS_H
