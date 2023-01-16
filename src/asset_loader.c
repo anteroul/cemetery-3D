@@ -20,13 +20,30 @@ Texture2D loadTex(char path[])
 	return tex;
 }
 
-char* concat(char path[])
+char* concat(char path[], int parentDirs)
 {
-    char root[] = "../";
-    char newPath[strlen(path) + strlen(root)];
+	char* root = "";
 
-    sprintf(newPath, "%s%s", root, path);
-    printf("%s\n", newPath);
+	if (parentDirs == 0)
+	{
+		return path;
+	}
+	else if (parentDirs == 1 || parentDirs == 2)
+	{
+		root = "../";
+	}
+	else
+	{
+		root = "../../../";
+	}
+    
+	char* newPath = (char*)malloc(strlen(path) + strlen(root));
+	const char* finalPath = strdup(newPath);
+	newPath = NULL;
 
-    return newPath;
+    sprintf(finalPath, "%s%s", root, path);
+    printf("%s\n", finalPath);
+	free(newPath);
+
+    return finalPath;
 }

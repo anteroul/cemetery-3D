@@ -13,7 +13,7 @@ Texture2D loadTex(char path[]);
 /*---------------------------*/
 
 /*------Helper Functions-----*/
-char* concat(char path[]);
+char* concat(char path[], int parentDirs);
 /*---------------------------*/
 
 #endif

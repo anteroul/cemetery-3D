@@ -4,7 +4,7 @@
 #include "headers.h"
 
 #define NUM_FRAMES_PER_LINE     4
-#define ENEMIES                 4
+#define ENEMIES                 8
 
 
 typedef struct Player {
@@ -47,7 +47,7 @@ static Rectangle frameRec;
 static Camera camera = { 0 };
 
 // Gameplay functions:
-void initGame(void);
+void initGame(int buildDirConfig);
 void drawGame(void);
 void updateGame(void);
 void resetGame(void);
