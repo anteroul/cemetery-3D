@@ -42,39 +42,31 @@ void initGame(int buildDirConfig)
     camera.up = (Vector3) {0.0f, 1.0f, 0.0f};
     camera.fovy = 60.0f;
     camera.projection = CAMERA_PERSPECTIVE;
-    SetCameraMode(camera, CAMERA_FIRST_PERSON); // Set a first person camera mode
     SetTargetFPS(60);                           // Set our game to run at 60 frames-per-second
     deathSound = false;
     PlaySound(fxBegin);
     PlayMusicStream(music);
 }
 
-void resetGame(void)
+void updateGame(Vector2 winSize)
 {
-    player = initPlayer();
-    camera.position = (Vector3) {4.0f, 2.0f, 4.0f};
-    deathSound = false;
-    PlaySound(fxBegin);
-    PlayMusicStream(music);
-
-    for (int i = 0; i < ENEMIES; i++)
-    {
-        arr_enemy[i].enemyBoxPos.x = rand() % 32 - 16;
-        arr_enemy[i].enemyBoxPos.y = -1.0f;
-        arr_enemy[i].enemyBoxPos.z = rand() % 32 - 16;
-    }
-}
-
-void updateGame(void)
-{
+    const Vector2 windowSize = winSize;
     UpdateMusicStream(music);
     // Update
     drawGame();
+    Vector2 mousePos = GetMousePosition();
     Vector3 oldCamPos = camera.position;
-    UpdateCamera(&camera);                  // Update camera
+    UpdateCamera(&camera, CAMERA_FIRST_PERSON);                  // Update camera
 
     if (!gameOver)
     {
+        HideCursor();
+
+        if (mousePos.x >= windowSize.x - 1 || mousePos.x <= windowSize.x + 1)
+            SetMousePosition(windowSize.x / 2, windowSize.y / 2);
+
+        if (mousePos.y >= windowSize.y - 1 || mousePos.y <= windowSize.y + 1)
+            SetMousePosition(windowSize.x / 2, windowSize.y / 2);
 
         // Check input for sprinting:
         sprint(&player, &camera);
@@ -82,13 +74,13 @@ void updateGame(void)
         // Bounding boxes
 
         // Attack Range
-        struct BoundingBox range = {
-                camera.target.x - 0.5f, camera.target.y - 1.0f, camera.target.z - 0.5f,
-                camera.target.x + 0.5f, camera.target.y + 1.5f, camera.target.z + 0.5f
+        BoundingBox range = {
+                camera.target.x - 0.5f, camera.target.y - 0.5f, camera.target.z - 0.5f,
+                camera.target.x + 0.5f, camera.target.y + 0.5f, camera.target.z + 0.5f
         };
 
         // Player Bounding Box
-        struct BoundingBox playerHitBox = {
+        BoundingBox playerHitBox = {
                 camera.position.x - 1.0f, camera.position.y - 1.5f, camera.position.z - 1.0f,
                 camera.position.x + 1.0f, camera.position.y + 0.5f, camera.position.z + 1.0f
         };
@@ -114,7 +106,7 @@ void updateGame(void)
 
                     // Define Bounding Box for enemy
 
-                    struct BoundingBox cBounds = {
+                    BoundingBox cBounds = {
                             arr_enemy[i].enemyBoxPos.x - 2.5f, 0.0f, arr_enemy[i].enemyBoxPos.z - 2.5f,
                             arr_enemy[i].enemyBoxPos.x + 2.5f, 2.5f, arr_enemy[i].enemyBoxPos.z + 2.5f
                     };
@@ -159,15 +151,14 @@ void updateGame(void)
                 arr_enemy[i].enemyBoxPos.y = -1.5f;
                 arr_enemy[i].enemyBoxPos.z = rand() % 32 - 16;
 
-                struct BoundingBox newBounds =
-                        {
-                                arr_enemy[i].enemyBoxPos.x - 2.5f,
-                                0.0f,
-                                arr_enemy[i].enemyBoxPos.z - 2.5f,
-                                arr_enemy[i].enemyBoxPos.x + 2.5f,
-                                2.5f,
-                                arr_enemy[i].enemyBoxPos.z + 2.5f
-                        };
+                BoundingBox newBounds = {
+                    arr_enemy[i].enemyBoxPos.x - 2.5f,
+                    0.0f,
+                    arr_enemy[i].enemyBoxPos.z - 2.5f,
+                    arr_enemy[i].enemyBoxPos.x + 2.5f,
+                    2.5f,
+                    arr_enemy[i].enemyBoxPos.z + 2.5f
+                };
 
                 arr_enemy[i].enemyBounds = newBounds;
                 arr_enemy[i].active = true;
@@ -193,6 +184,26 @@ void updateGame(void)
             StopMusicStream(music);
             gameOver = true;
         }
+    } else {
+        if (IsKeyPressed(32))
+        {
+            player = initPlayer();
+            camera.position = (Vector3){ 4.0f, 2.0f, 4.0f };
+            deathSound = false;
+            PlaySound(fxBegin);
+            PlayMusicStream(music);
+
+            for (int i = 0; i < ENEMIES; i++)
+            {
+                arr_enemy[i].enemyBoxPos.x = rand() % 32 - 16;
+                arr_enemy[i].enemyBoxPos.y = -1.0f;
+                arr_enemy[i].enemyBoxPos.z = rand() % 32 - 16;
+            }
+
+            gameOver = false;
+        }
+
+        ShowCursor();
     }
 }
 
@@ -200,13 +211,8 @@ void animateSword(void)
 {
     int attackCounter = framesCounter;
     // Sword moves with camera:
-    swordPosition.y = 50.0f * camera.target.y;
-    swordPosition.x = 340.0f;
-
-    if (camera.target.y <= 2.5f)
-        swordPosition.y += 30.0f;
-    if (camera.target.y <= 1.5f)
-        swordPosition.y += 25.0f;
+    swordPosition.y = 2.5f * camera.target.y + 120.f;
+    swordPosition.x = 280.0f;
 
     if (player.attacking)
     {
@@ -277,7 +283,6 @@ void drawGame(void)
         DrawTexture(hud, 0, 0, WHITE);
 
     } else {
-
         if (!deathSound)
         {
             PlaySound(fxDeath);
@@ -285,18 +290,11 @@ void drawGame(void)
         }
 
         DrawText("YOU ARE DEAD!", GetScreenWidth() / 2 - MeasureText("YOU ARE DEAD!", 20) / 2,
-                 GetScreenHeight() / 2 - 50, 20, RED);
+            GetScreenHeight() / 2 - 50, 20, RED);
         DrawText("PRESS SPACE TO RETRY!", GetScreenWidth() / 2 - MeasureText("PRESS SPACE TO RETRY!", 20) / 2,
-                 GetScreenHeight() / 2, 20, RAYWHITE);
+            GetScreenHeight() / 2, 20, RAYWHITE);
         DrawText(TextFormat("%04i", player.score), 20, 380, 40, GREEN);
-
-        if (IsKeyPressed(32))
-        {
-            resetGame();
-            gameOver = false;
-        }
     }
     DrawFPS(0, 0);
-
     EndDrawing();
 }

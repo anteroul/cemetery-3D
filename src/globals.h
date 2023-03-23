@@ -49,8 +49,7 @@ static Camera camera = { 0 };
 // Gameplay functions:
 void initGame(int buildDirConfig);
 void drawGame(void);
-void updateGame(void);
-void resetGame(void);
+void updateGame(Vector2 winSize);
 
 // Initializers:
 Player initPlayer(void);
@@ -59,7 +58,6 @@ Player initPlayer(void);
 void animateSword(void);
 void sprint(Player* p, Camera* cam);
 void attack(Player* p, Sound* sound);
-void kill(Enemy* enemy);
 void takeDamage(void);
 
 #endif //VALIANTENGINE_GLOBALS_H

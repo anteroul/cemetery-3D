@@ -22,24 +22,23 @@ Texture2D loadTex(char path[])
 
 char* concat(char path[], int parentDirs)
 {
-	char* root = "";
+    char *root = "";
 
-	if (parentDirs == 0)
-	{
-		return path;
-	} else if (parentDirs == 1 || parentDirs == 2) {
-		root = "../";
-	} else {
-		root = "../../../";
-	}
-    
-	char* newPath = (char*)malloc(strlen(path) + strlen(root));
-	const char* finalPath = strdup(newPath);
-	newPath = NULL;
+    if (parentDirs == 0) {
+        return path;
+    } else if (parentDirs == 1 || parentDirs == 2) {
+        root = "../";
+    } else {
+        root = "../../../";
+    }
 
-    	sprintf(finalPath, "%s%s", root, path);
-    	printf("%s\n", finalPath);
-	free(newPath);
+    char *newPath = (char *) malloc(strlen(path) + strlen(root));
+    const char *finalPath = strdup(newPath);
+    newPath = NULL;
 
-    	return finalPath;
+    sprintf(finalPath, "%s%s", root, path);
+    printf("%s\n", finalPath);
+    free(newPath);
+
+    return finalPath;
 }

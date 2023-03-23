@@ -7,7 +7,7 @@ void sprint(Player* p, Camera* cam)
     {
         if (p->energy > 0)
         {
-            UpdateCamera(cam);
+            UpdateCamera(cam, CAMERA_FIRST_PERSON);
             if (IsKeyDown(65) || IsKeyDown(83) || IsKeyDown(68) || IsKeyDown(87))
                 p->energy--;
             else if (p->energy < 100)

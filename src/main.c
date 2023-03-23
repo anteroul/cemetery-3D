@@ -20,7 +20,7 @@ int main(void)
     // Main game loop
     while (!WindowShouldClose())
     {
-        updateGame();
+        updateGame((Vector2) {screenWidth, screenHeight});
     }
 
     // De-Initialization
