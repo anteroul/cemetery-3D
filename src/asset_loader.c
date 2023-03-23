@@ -27,13 +27,9 @@ char* concat(char path[], int parentDirs)
 	if (parentDirs == 0)
 	{
 		return path;
-	}
-	else if (parentDirs == 1 || parentDirs == 2)
-	{
+	} else if (parentDirs == 1 || parentDirs == 2) {
 		root = "../";
-	}
-	else
-	{
+	} else {
 		root = "../../../";
 	}
     
@@ -41,9 +37,9 @@ char* concat(char path[], int parentDirs)
 	const char* finalPath = strdup(newPath);
 	newPath = NULL;
 
-    sprintf(finalPath, "%s%s", root, path);
-    printf("%s\n", finalPath);
+    	sprintf(finalPath, "%s%s", root, path);
+    	printf("%s\n", finalPath);
 	free(newPath);
 
-    return finalPath;
+    	return finalPath;
 }
