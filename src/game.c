@@ -89,7 +89,7 @@ void updateGame(Vector2 winSize)
 
         for (int i = 0; i < ENEMIES; i++)
         {
-            if (arr_enemy[i].active == true)
+            if (arr_enemy[i].active)
             {
                 if (arr_enemy[i].enemyBoxPos.y >= 1.0f)
                 {
@@ -188,7 +188,6 @@ void updateGame(Vector2 winSize)
         if (IsKeyPressed(32))
         {
             player = initPlayer();
-            camera.position = (Vector3){ 4.0f, 2.0f, 4.0f };
             deathSound = false;
             PlaySound(fxBegin);
             PlayMusicStream(music);
@@ -199,6 +198,11 @@ void updateGame(Vector2 winSize)
                 arr_enemy[i].enemyBoxPos.y = -1.0f;
                 arr_enemy[i].enemyBoxPos.z = rand() % 32 - 16;
             }
+
+            camera.position = (Vector3) {4.0f, 2.0f, 4.0f};
+            camera.target = (Vector3) {0.0f, 1.8f, 0.0f};
+            camera.up = (Vector3) {0.0f, 1.0f, 0.0f};
+            camera.fovy = 60.0f;
 
             gameOver = false;
         }

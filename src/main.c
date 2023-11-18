@@ -15,7 +15,7 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "Cemetery 3D");
     InitAudioDevice();
 
-    initGame(BUILD_DIR_VS);
+    initGame(BUILD_DIR_IN_ROOT);
 
     // Main game loop
     while (!WindowShouldClose())
